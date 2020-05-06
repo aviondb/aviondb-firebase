@@ -2,7 +2,7 @@ const IPFS = require("ipfs");
 const ipfs = new IPFS();
 let AccessControllers = require("orbit-db-access-controllers");
 const FirebaseAccessController = require("./FirebaseAccessController");
-const AvionDB = require("aviondb");
+const OrbitDB = require("orbitdb");
 
 var firebaseConfig = {
   apiKey: "AIzaSyDj__oB7gGk4D2plH5AmY-5wa1VfJvHcJc",
@@ -22,12 +22,16 @@ AccessControllers.addAccessController({
 const test = async () => {
   await ipfs.ready;
 
-  const aviondb = await AvionDB.init(
-    "database-test-1",
-    ipfs,
-    {},
-    { AccessControllers: AccessControllers }
-  );
+  const orbitdb = await OrbitDB.createInstance(ipfs, {
+    AccessControllers: AccessControllers,
+  });
+
+  /* const db = await orbitdb.keyvalue("first-database", {
+      accessController: {
+        type: "othertype",
+        write: [identity.id],
+      },
+    }); */
 };
 
 test();
