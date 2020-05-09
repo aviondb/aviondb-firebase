@@ -109,4 +109,4 @@ class FirebaseAccessController extends EventEmitter {
   //async close() {}
 }
 
-module.exports = FirebaseAccessController;
+export default FirebaseAccessController;

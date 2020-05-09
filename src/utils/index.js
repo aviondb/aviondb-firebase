@@ -1,5 +1,5 @@
 import AccessControllers from "orbit-db-access-controllers";
-const FirebaseAccessController = require("../AccessController/FirebaseAccessController");
+import FirebaseAccessController from "../AccessController/FirebaseAccessController";
 export const firebase = require("firebase/app");
 require("firebase/auth");
 var collection;
