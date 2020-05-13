@@ -3,10 +3,11 @@
 const EventEmitter = require("events").EventEmitter;
 const io = require("orbit-db-io");
 /**
- * Interface for OrbitDB Access Controllers
+ * A Firebase based AccessController for AvionDB & OrbitDB
  *
- * Any OrbitDB access controller needs to define and implement
- * the methods defined by the interface here.
+ * A demo app using FirebaseAccessController
+ * https://github.com/dappkit/aviondb-firebase
+ *
  */
 class FirebaseAccessController extends EventEmitter {
   constructor(ipfs, options) {
@@ -20,9 +21,9 @@ class FirebaseAccessController extends EventEmitter {
   }
 
   /*
-        Every AC needs to have a 'Factory' method
-        that creates an instance of the AccessController
-      */
+    Every AC needs to have a 'Factory' method
+    that creates an instance of the AccessController
+  */
   static async create(orbitdb, options) {
     console.log(options);
     if (!options.firebaseConfig) {
@@ -37,45 +38,42 @@ class FirebaseAccessController extends EventEmitter {
   }
 
   /*
-        Return the type for this controller
-        NOTE! This is the only property of the interface that
-        shouldn't be overridden in the inherited Access Controller
-      */
+    Return the type for this controller
+  */
   get type() {
     return this.constructor.type;
   }
 
-  /* Each Access Controller has some address to anchor to */
-  //get address() {}
-
   /*
-        Called by the databases (the log) to see if entry should
-        be allowed in the database. Return true if the entry is allowed,
-        false is not allowed
-      */
+    Called by the databases (the log) to see if entry should
+    be allowed in the database. Return true if the entry is allowed,
+    false is not allowed
+  */
   async canAppend(entry, identityProvider) {
     return new Promise((resolve, reject) => {
       this.firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
+          // A user is signed in
           const verifiedIdentity = await identityProvider.verifyIdentity(
             entry.identity
           );
           // Allow access if identity verifies
           return resolve(verifiedIdentity);
         } else {
-          // No user is signed in.
+          // No user is signed in
           return resolve(false);
         }
       });
     });
   }
 
-  /* Add and remove access */
-  async grant(access, identity) {
-    //await this.firebase.auth().createUser(user);
+  /* Add access */
+  async grant(user) {
+    await this.firebase.auth().createUser(user);
   }
-  async revoke(access, identity) {
-    //await this.firebase.auth().currentUser.delete();
+  /* Remove access */
+  async revoke() {
+    await this.firebase.auth().currentUser.delete();
   }
 
   /* AC creation and loading */
@@ -105,8 +103,6 @@ class FirebaseAccessController extends EventEmitter {
     // return the manifest data
     return { address: cid };
   }
-  /* Called when the database for this AC gets closed */
-  //async close() {}
 }
 
 export default FirebaseAccessController;
