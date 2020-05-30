@@ -1,3 +1,4 @@
+import AvionDB from "aviondb";
 import AccessControllers from "orbit-db-access-controllers";
 import FirebaseAccessController from "../AccessController/FirebaseAccessController";
 export const firebase = require("firebase/app");
@@ -23,7 +24,7 @@ AccessControllers.addAccessController({
 export const getAvionDBCollection = async () => {
   if (!collection) {
     const ipfs = await window.Ipfs.create();
-    const aviondb = await window.AvionDB.init(
+    const aviondb = await AvionDB.init(
       "database-test-100",
       ipfs,
       {
